@@ -1,13 +1,14 @@
 {
   "name": "bun-app",
-  "module": "./app/index.ts",
+  "module": "index.ts",
   "type": "module",
   "scripts": {
-    "start": "bun run ./app/index.ts",
-    "dev": "bun --watch run ./app/index.ts",
-    "build": "bun build ./app/index.ts --outdir ./out --minify"
+    "start": "bun run index.ts",
+    "dev": "bun --watch run index.ts",
+    "build": "bun build ./index.ts --outdir ./out --minify"
   },
   "devDependencies": {
+    "@types/amqplib": "^0.10.4",
     "@types/bun": "latest",
     "@types/sharp": "^0.32.0"
   },
@@ -15,6 +16,7 @@
     "typescript": "^5.0.0"
   },
   "dependencies": {
+    "amqplib": "^0.10.3",
     "sharp": "^0.33.2"
   },
   "trustedDependencies": [
