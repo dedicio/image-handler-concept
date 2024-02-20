@@ -1,4 +1,5 @@
 services:
+
   bun-app:
     build:
       context: ./bun
@@ -6,6 +7,32 @@ services:
       - 4000:4000
     volumes:
       - ./bun:/usr/src/app
+      - ~/.aws:/home/bun/.aws
+    env_file:
+      - path: ./.env
+
+  express-app:
+    build:
+      context: ./express
+    ports:
+      - 4001:3000
+    volumes:
+      - ./express:/usr/src/app
+      - ~/.aws:/home/node/.aws
+    env_file:
+      - path: ./.env
+
+  fastify-app:
+    build:
+      context: ./fastify
+    ports:
+      - 4002:3000
+    volumes:
+      - ./fastify:/usr/src/app
+      - ~/.aws:/home/node/.aws
+    env_file:
+      - path: ./.env
+
 
   # rabbitmq:
   #   image: rabbitmq:3-management-alpine

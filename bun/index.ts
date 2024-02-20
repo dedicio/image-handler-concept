@@ -1,6 +1,6 @@
 
 import { CORS_HEADERS } from './app/constants.ts';
-import { upload, move } from './app/handler.ts';
+import * as handler from './app/handler.ts';
 
 const server = Bun.serve({
     port: 4000,
@@ -14,12 +14,12 @@ const server = Bun.serve({
         const url = new URL(req.url);
 
         if (url.pathname === '/upload') {
-            return upload(req);
+            return handler.upload(req);
         }
 
-        if (url.pathname === '/move') {
-            return move(req);
-        }
+        // if (url.pathname === '/move') {
+        //     return handler.move(req);
+        // }
 
         return new Response("Not Found", { status: 404 });
     },
