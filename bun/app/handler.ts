@@ -55,7 +55,7 @@ export const upload = async (req: Request): Promise<Response> => {
         identifier,        
     });
 
-    broker.send(`upload.${origin}.${key}`, body);
+    // broker.send(`upload.${origin}.${key}`, body);
 
     return new Response(
         body,
