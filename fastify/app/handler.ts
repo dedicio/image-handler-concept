@@ -94,7 +94,6 @@ export const upload = async (req: MulterRequest ): Promise<Response> => {
                 }
             );
         } catch (error) {
-            console.log('🚀 ~ upload ~ error:', error);
             return utils.buildErrorResponse('Error uploading image.', 500);
         }
     } catch (error) {

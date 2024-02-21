@@ -26,7 +26,6 @@ export const upload = async (req: Request): Promise<Response> => {
         size: imageSize,
         name: imageName,
     } = image;
-    console.log('🚀 ~ upload ~ image:', image);
 
     if (!ACCEPTED_IMAGE_TYPES.includes(imageType)) {
         return utils.buildErrorResponse('Invalid image type.');
@@ -91,6 +90,6 @@ export const upload = async (req: Request): Promise<Response> => {
     }
 };
 
-export const move = async (req: Request): Promise<Response> => {
-    return new Response(null);
-};
+// export const move = async (req: Request): Promise<Response> => {
+//     return new Response(null);
+// };
