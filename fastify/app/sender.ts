@@ -1,18 +1,21 @@
-import { SNSClient, PublishCommand } from "@aws-sdk/client-sns";
-import type { PublishCommandInput } from "@aws-sdk/client-sns";
+import { EventBridgeClient, PutEventsCommand } from "@aws-sdk/client-eventbridge";
+import type { PutEventsCommandInput } from "@aws-sdk/client-eventbridge";
 
 const AWS_REGION = process.env["AWS_REGION"];
-const AWS_TOPIC_ARN = process.env["AWS_TOPIC_ARN"];
 
-const client = new SNSClient({ region: AWS_REGION });
+const client = new EventBridgeClient({ region: AWS_REGION });
 
 export const send = async (topic: string, message: string) => {
-    
-    const params: PublishCommandInput = {
-        Message: message,
-        TopicArn: `${AWS_TOPIC_ARN}:${topic}`,
+    const params: PutEventsCommandInput = {
+        Entries: [
+            {
+                Detail: message,
+                DetailType: topic,
+                Source: 'image-handler',
+            }
+        ]
     };
-    const command = new PublishCommand(params);
+    const command = new PutEventsCommand(params);
 
     try {
         const data = await client.send(command);
