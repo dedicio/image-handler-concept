@@ -12,6 +12,7 @@ server.post(
     storage.single('image'),
     async (req, res) => {
         const result = await handler.upload(req);
+        console.log('🚀 ~ result:', result);
         const message = result.body ? JSON.parse(await result.text()) : '';
         res
             .status(result.status)

@@ -9,5 +9,8 @@ export function getReducedSize(originalSize, finalSize) {
 }
 
 export function buildErrorResponse(message, code = 400) {
-    return new Response(message, { status: code });
+    return new Response(
+        JSON.stringify(message),
+        { status: code }
+    );
 }

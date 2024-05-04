@@ -14,12 +14,19 @@ const CORS_HEADERS = {
 }
 
 export const upload = async req => {
-    const formdata = await req.formData();
-    const image = formdata.get('image');
-    const account = formdata.get('account');
-    const origin = formdata.get('origin');
-    const key = formdata.get('key');
-    const identifier = formdata.get('identifier');
+    let formData;
+
+    try {
+        formData = await req.formData();
+    } catch (error) {
+        return utils.buildErrorResponse('Must upload a valid body data.');
+    }
+
+    const image = formData.get('image');
+    const account = formData.get('account');
+    const origin = formData.get('origin');
+    const key = formData.get('key');
+    const identifier = formData.get('identifier');
 
     if (!image || !(image instanceof File)) {
         return utils.buildErrorResponse('Must upload a valid image file.');
@@ -30,7 +37,6 @@ export const upload = async req => {
         size: imageSize,
         name: imageName,
     } = image;
-    console.log('🚀 ~ upload ~ image:', image);
 
     if (!ACCEPTED_IMAGE_TYPES.includes(imageType)) {
         return utils.buildErrorResponse('Invalid image type.');

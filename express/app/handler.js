@@ -14,6 +14,10 @@ const CORS_HEADERS = {
 }
 
 export const upload = async req => {
+    if (!req.body) {
+        return utils.buildErrorResponse('Must upload a valid body data.');
+    }
+
     const { file: image } = req;
     const {
         key,

@@ -3,9 +3,8 @@
     "module": "index.js",
     "type": "module",
     "scripts": {
-      "start": "tsx index.js",
-      "dev": "tsx watch --no-warnings --env-file=../.env index.js",
-      "build": "tsc -p tsconfig.json"
+      "start": "node index.js",
+      "dev": "node --env-file=../.env --watch index.js"
     },
     "dependencies": {
       "@aws-sdk/client-s3": "^3.515.0",

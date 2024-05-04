@@ -4,8 +4,7 @@
   "type": "module",
   "scripts": {
     "start": "node index.js",
-    "dev": "node watch --no-warnings --env-file=../.env index.js",
-    "build": "tsc -p tsconfig.json"
+    "dev": "node --env-file=../.env --watch index.js"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.515.0",
