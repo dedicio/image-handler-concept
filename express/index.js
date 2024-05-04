@@ -1,11 +1,10 @@
 import express from 'express';
 import multer from 'multer';
-import * as handler from './app/handler.ts';
-import type { Express } from 'express';
+import * as handler from './app/handler.js';
 
 const { ADDRESS = '0.0.0.0', PORT = '5000' } = process.env;
 
-const server: Express = express();
+const server = express();
 const storage = multer();
 
 server.post(
