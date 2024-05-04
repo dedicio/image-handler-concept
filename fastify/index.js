@@ -1,6 +1,6 @@
 import fastify from 'fastify';
 import multer from 'fastify-multer';
-import * as handler from './app/handler.ts';
+import * as handler from './app/handler.js';
 
 const { ADDRESS = '0.0.0.0', PORT = '3000' } = process.env;
 

@@ -1,16 +1,11 @@
 {
   "name": "node-image-handler",
-  "module": "index.ts",
+  "module": "index.js",
   "type": "module",
   "scripts": {
-    "start": "tsx index.ts",
-    "dev": "tsx watch --no-warnings --env-file=../.env index.ts",
+    "start": "node index.js",
+    "dev": "node watch --no-warnings --env-file=../.env index.js",
     "build": "tsc -p tsconfig.json"
-  },
-  "devDependencies": {
-    "@types/node": "^20.11.19",
-    "tsx": "^4.7.1",
-    "typescript": "^5.3.3"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.515.0",
