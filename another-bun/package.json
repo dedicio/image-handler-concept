@@ -1,0 +1,29 @@
+{
+  "name": "bun-app",
+  "module": "index.ts",
+  "type": "module",
+  "scripts": {
+    "start": "bun run index.ts",
+    "dev": "bun --env-file=../.env --watch run index.ts",
+    "build": "bun build ./index.ts --outdir ./out --minify"
+  },
+  "devDependencies": {
+    "@types/amqplib": "^0.10.4",
+    "@types/bun": "latest",
+    "@types/sharp": "^0.32.0"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "@aws-sdk/client-eventbridge": "^3.515.0",
+    "@aws-sdk/client-s3": "^3.515.0",
+    "amqplib": "^0.10.3",
+    "sharp": "^0.33.2",
+    "shorthash2": "^1.0.3",
+    "zod": "^3.22.4"
+  },
+  "trustedDependencies": [
+    "sharp"
+  ]
+}

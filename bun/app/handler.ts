@@ -1,24 +1,59 @@
-import sharp from "sharp";
 import shortHash from 'shorthash2';
-import * as utils from "./utils.ts";
-import { CORS_HEADERS } from './constants.ts';
-import * as sender from "./sender.ts";
+import {
+    CORS_HEADERS,
+    AWS_S3_BUCKET_URL,
+    ALLOWED_EXTENSIONS,
+} from './constants.ts';
+import * as utils from './utils.ts';
+import * as sender from './sender.ts';
 import * as storage from './storage.ts';
+import * as process from './process.ts';
+import * as validator from './validator.ts';
 
-const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp"];
-const MAX_IMAGE_SIZE = 1024 * 1024 * 2; // 2MB
-const AWS_S3_BUCKET_URL = Bun.env["AWS_S3_BUCKET_URL"];
+type PayloadInput = {
+    image: File,
+    account: string,
+    origin: string,
+    key: string,
+    identifier: string,
+    outputFormat: string,
+    outputWidth: number,
+    outputHeight: number,
+}
 
 export const upload = async (req: Request): Promise<Response> => {
-    const formdata = await req.formData();
-    const image = formdata.get('image');
-    const account = formdata.get('account');
-    const origin = formdata.get('origin');
-    const key = formdata.get('key');
-    const identifier = formdata.get('identifier');
+    const formData = await req.formData();
+    // const image = formData.get('image');
+    // const account = formData.get('account');
+    // const origin = formData.get('origin');
+    // const key = formData.get('key');
+    // const identifier = formData.get('identifier');
+    // const outputFormat = formData.get('toFormat');
+    // const outputWidth = formData.get('toWidth');
+    // const outputHeight = formData.get('toHeight');
 
-    if (!image || !(image instanceof File)) {
-        throw new Error('Must upload a valid image file.');
+    const payload = Object.fromEntries(formData.entries()) as any as PayloadInput;
+
+    const {
+        image,
+        account,
+        origin,
+        key,
+        identifier,
+        outputFormat,
+        outputWidth,
+        outputHeight,
+    } = payload;
+
+    const invalidPayloadErrorMessage  = validator.getInvalidPayloadErrorMessage({
+        image: image,
+        outputFormat: outputFormat,
+        outputWidth: outputWidth,
+        outputHeight: outputHeight,
+    });
+
+    if (invalidPayloadErrorMessage) {
+        return utils.buildErrorResponse(invalidPayloadErrorMessage);
     }
 
     const {
@@ -27,26 +62,22 @@ export const upload = async (req: Request): Promise<Response> => {
         name: imageName,
     } = image;
 
-    if (!ACCEPTED_IMAGE_TYPES.includes(imageType)) {
-        return utils.buildErrorResponse('Invalid image type.');
-    }
-
-    if (imageSize > MAX_IMAGE_SIZE) {
-        return utils.buildErrorResponse('Image size too large');
-    }
-
+    const ext = outputFormat;
     const imageBuffer = await image.arrayBuffer();
 
     const sanitazedFileName = utils.extractFileName(imageName);
     const hash = shortHash(Date.now().toString());
-    const convertedFileName = `${sanitazedFileName}-${hash}.webp`;
+    const convertedFileName = `${sanitazedFileName}-${hash}.${ext}`;
     const path = `${account}/${key}/${convertedFileName}`;
     const url = `${AWS_S3_BUCKET_URL}/${path}`;
     
     try {
-        const { data, info } = await sharp(imageBuffer)
-            .webp()
-            .toBuffer({ resolveWithObject: true });
+        const outputOptions = {
+            format: ext,
+            width: outputWidth,
+            height: outputHeight,
+        }
+        const { data, info } = await process.process(imageBuffer, outputOptions);
 
         try {
             await storage.upload(data, path);
@@ -74,11 +105,11 @@ export const upload = async (req: Request): Promise<Response> => {
                 body,
                 {
                     status: 200,
-                    statusText: "OK",
+                    statusText: 'OK',
                     headers: {
                         ...CORS_HEADERS,
                         'Access-Control-Allow-Origin': '*',
-                        "Content-Type": "application/json",
+                        'Content-Type': 'application/json',
                     },
                 }
             );
