@@ -32,6 +32,11 @@ export const upload = async req => {
         return utils.buildErrorResponse('Must upload a valid image file.');
     }
 
+
+    if (!key || !account) {
+        return utils.buildErrorResponse('Must provide key and account values.');
+    }
+
     const {
         type: imageType,
         size: imageSize,
