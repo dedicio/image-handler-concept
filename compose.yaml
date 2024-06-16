@@ -1,21 +1,10 @@
 services:
 
-  bun-app:
-    build:
-      context: ./bun
-    ports:
-      - 4000:4000
-    volumes:
-      - ./bun:/usr/src/app
-      - ~/.aws:/home/bun/.aws
-    env_file:
-      - path: ./.env
-
   express-app:
     build:
       context: ./express
     ports:
-      - 4001:3000
+      - 4002:5000
     volumes:
       - ./express:/usr/src/app
       - ~/.aws:/home/node/.aws
@@ -26,7 +15,7 @@ services:
     build:
       context: ./fastify
     ports:
-      - 4002:3000
+      - 4003:3000
     volumes:
       - ./fastify:/usr/src/app
       - ~/.aws:/home/node/.aws
@@ -34,11 +23,54 @@ services:
       - path: ./.env
 
 
-  # rabbitmq:
-  #   image: rabbitmq:3-management-alpine
-  #   ports:
-  #     - 5672:5672
-  #     - 15672:15672
-  #   environment:
-  #     RABBITMQ_DEFAULT_USER: rabbitmq
-  #     RABBITMQ_DEFAULT_PASS: rabbitmq
+  localstack:
+    image: localstack/localstack:1.0.4
+    ports:
+      - "4566:4566"
+      - "4571:4571"
+    environment:
+      SERVICES: s3,sns
+      DEBUG: 1
+      DEFAULT_REGION: us-east-1
+      DATA_DIR: /tmp/localstack/data
+      HOSTNAME: localstack
+      HOSTNAME_EXTERNAL: localstack
+      USE_SSL: false
+    volumes:
+      - "./localstack:/var/lib/localstack"
+    
+  aws-cli:
+    image: amazon/aws-cli
+    volumes:
+      - ./bucket:/aws
+    depends_on:
+      - localstack
+    environment:
+      - AWS_ACCESS_KEY_ID=test
+      - AWS_SECRET_ACCESS_KEY=test
+      - AWS_DEFAULT_REGION=us-east-1
+    entrypoint: /bin/sh -c
+    command: >
+      "
+        aws --endpoint-url=http://localstack:4566 s3 ls
+        aws --endpoint-url=http://localstack:4566 s3api create-bucket --bucket dedicio-image-test --region us-east-1
+        aws --endpoint-url=http://localstack:4566 sns create-topic --name upload
+      "
+
+  influxdb:
+    image: influxdb:1.8
+    ports:
+      - "8086:8086"
+    environment:
+      - INFLUXDB_DB=k6
+
+  grafana:
+    image: grafana/grafana:latest
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
+      - GF_AUTH_ANONYMOUS_ENABLED=true
+      - GF_AUTH_BASIC_ENABLED=false
+    volumes:
+      - ./grafana:/etc/grafana/provisioning/
