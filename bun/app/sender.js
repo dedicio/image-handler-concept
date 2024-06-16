@@ -1,9 +1,18 @@
 import { SNSClient, PublishCommand } from '@aws-sdk/client-sns';
 
-const AWS_REGION = process.env['AWS_REGION'];
-const AWS_TOPIC_ARN = process.env['AWS_TOPIC_ARN'];
+const AWS_REGION = Bun.env['AWS_REGION'];
+const AWS_TOPIC_ARN = Bun.env['AWS_TOPIC_ARN'];
+const AWS_ENDPOINT = Bun.env['AWS_ENDPOINT'];
 
-const client = new SNSClient({ region: AWS_REGION });
+const clientConfig = {
+    region: AWS_REGION,
+};
+
+if (AWS_ENDPOINT) {
+    clientConfig.endpoint = AWS_ENDPOINT;
+}
+
+const client = new SNSClient(clientConfig);
 
 export const send = async (topic, message) => {
     const params = {

@@ -24,6 +24,6 @@ server.post(
 //     handler.move,
 // );
 
-server.listen(+PORT, () => {
+server.listen(+PORT, ADDRESS, () => {
     console.log(`Server listening at ${ADDRESS}:${PORT}`);
 });

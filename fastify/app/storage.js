@@ -2,12 +2,18 @@ import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
 
 const AWS_REGION = process.env['AWS_REGION'];
 const AWS_S3_BUCKET = process.env['AWS_S3_BUCKET'];
+const AWS_ENDPOINT = process.env['AWS_ENDPOINT'];
 
-const client = new S3Client({
+const clientConfig = {
   region: AWS_REGION,
-  endpoint: 'http://localhost:4566',
-  forcePathStyle: true,
-});
+};
+
+if (AWS_ENDPOINT) {
+  clientConfig.endpoint = AWS_ENDPOINT;
+  clientConfig.forcePathStyle = true;
+}
+
+const client = new S3Client(clientConfig);
 
 export const upload = async (file, fileName)  => {
   const params = {
