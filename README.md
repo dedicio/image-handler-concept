@@ -49,4 +49,4 @@ make stop
 ```
 
 
-[^1]: Por problemas no uso do SDK da AWS no Bun, não foi possível rodar ele em container.
+[^1]: Por problemas no uso do SDK da AWS no Bun, não foi possível rodar ele em container. Por isso os testes referentes ao Bun no script estão comentados, mas se desejar instalar e rodar tudo direto na máquina, basta descomentá-lo e alterar as portas dos serviços.
