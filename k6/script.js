@@ -30,33 +30,33 @@ export const options = {
     //   ],
     // },
 
-    // express: {
-    //   executor: 'ramping-arrival-rate',
-    //   exec: "express",
-    //   startRate: 30,
-    //   timeUnit: '1m',
-    //   preAllocatedVUs: 30,
-    //   stages: [
-    //     { target: 30, duration: '1m' },
-    //     { target: 100, duration: '2m' },
-    //     { target: 100, duration: '4m' },
-    //     { target: 20, duration: '2m' },
-    //   ],
-    // },
+    express: {
+      executor: 'ramping-arrival-rate',
+      exec: "express",
+      startRate: 30,
+      timeUnit: '1m',
+      preAllocatedVUs: 30,
+      stages: [
+        { target: 30, duration: '1m' },
+        { target: 100, duration: '2m' },
+        { target: 100, duration: '4m' },
+        { target: 20, duration: '2m' },
+      ],
+    },
 
-    // fastify: {
-    //   executor: 'ramping-arrival-rate',
-    //   exec: "fastify",
-    //   startRate: 30,
-    //   timeUnit: '1m',
-    //   preAllocatedVUs: 30,
-    //   stages: [
-    //     { target: 30, duration: '1m' },
-    //     { target: 100, duration: '2m' },
-    //     { target: 100, duration: '4m' },
-    //     { target: 20, duration: '2m' },
-    //   ],
-    // }
+    fastify: {
+      executor: 'ramping-arrival-rate',
+      exec: "fastify",
+      startRate: 30,
+      timeUnit: '1m',
+      preAllocatedVUs: 30,
+      stages: [
+        { target: 30, duration: '1m' },
+        { target: 100, duration: '2m' },
+        { target: 100, duration: '4m' },
+        { target: 20, duration: '2m' },
+      ],
+    }
 
     // bun: {
     //   executor: 'ramping-vus',
@@ -68,25 +68,25 @@ export const options = {
     //   ],
     // },
 
-    express: {
-      executor: 'ramping-vus',
-      exec: 'express',
-      stages: [
-        { duration: '10s', target: 10 },
-        { duration: '50s', target: 10 },
-        { duration: '5s', target: 0 },
-      ],
-    },
+    // express: {
+    //   executor: 'ramping-vus',
+    //   exec: 'express',
+    //   stages: [
+    //     { duration: '10s', target: 10 },
+    //     { duration: '50s', target: 10 },
+    //     { duration: '5s', target: 0 },
+    //   ],
+    // },
 
-    fastify: {
-      executor: 'ramping-vus',
-      exec: 'fastify',
-      stages: [
-        { duration: '10s', target: 10 },
-        { duration: '50s', target: 10 },
-        { duration: '5s', target: 0 },
-      ],
-    },
+    // fastify: {
+    //   executor: 'ramping-vus',
+    //   exec: 'fastify',
+    //   stages: [
+    //     { duration: '10s', target: 10 },
+    //     { duration: '50s', target: 10 },
+    //     { duration: '5s', target: 0 },
+    //   ],
+    // },
   }
 };
 
