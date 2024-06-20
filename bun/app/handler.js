@@ -1,43 +1,46 @@
-import sharp from "sharp";
+import sharp from 'sharp';
 import shortHash from 'shorthash2';
-import * as utils from "./utils.ts";
-import * as sender from "./sender.ts";
-import * as storage from './storage.ts';
-import { CORS_HEADERS } from './constants.ts';
-import type { FastifyRequest } from "fastify";
+import * as utils from './utils.js';
+import * as sender from './sender.js';
+import * as storage from './storage.js';
 
-const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp"];
+const ACCEPTED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
 const MAX_IMAGE_SIZE = 1024 * 1024 * 2; // 2MB
-const AWS_S3_BUCKET_URL = process.env["AWS_S3_BUCKET_URL"];
+const AWS_S3_BUCKET_URL = Bun.env['AWS_S3_BUCKET_URL'];
+const CORS_HEADERS = {
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Methods': 'OPTIONS, POST',
+    'Access-Control-Allow-Headers': 'Content-Type',
+}
 
-type Body = {
-    key: string,
-    account: string,
-    identifier: string,
-    origin: string,
-};
+export const upload = async req => {
+    let formData;
 
-type MulterRequest = FastifyRequest & {
-    file?: any;
-};
+    try {
+        formData = await req.formData();
+    } catch (error) {
+        return utils.buildErrorResponse('Must upload a valid body data.');
+    }
 
-export const upload = async (req: MulterRequest ): Promise<Response> => {
-    const { file: image } = req;
-    const {
-        key,
-        account,
-        identifier,
-        origin,
-    } = req.body as Body;
+    const image = formData.get('image');
+    const account = formData.get('account');
+    const origin = formData.get('origin');
+    const key = formData.get('key');
+    const identifier = formData.get('identifier');
 
-    if (!image || !(image.buffer instanceof Buffer)) {
+    if (!image || !(image instanceof File)) {
         return utils.buildErrorResponse('Must upload a valid image file.');
     }
 
+
+    if (!key || !account) {
+        return utils.buildErrorResponse('Must provide key and account values.');
+    }
+
     const {
-        mimetype: imageType,
+        type: imageType,
         size: imageSize,
-        originalname: imageName,
+        name: imageName,
     } = image;
 
     if (!ACCEPTED_IMAGE_TYPES.includes(imageType)) {
@@ -48,26 +51,28 @@ export const upload = async (req: MulterRequest ): Promise<Response> => {
         return utils.buildErrorResponse('Image size too large');
     }
 
+    const imageBuffer = await image.arrayBuffer();
+
     const sanitazedFileName = utils.extractFileName(imageName);
     const hash = shortHash(Date.now().toString());
     const convertedFileName = `${sanitazedFileName}-${hash}.webp`;
     const path = `${account}/${key}/${convertedFileName}`;
     const url = `${AWS_S3_BUCKET_URL}/${path}`;
-
+    
     try {
-        const { data, info } = await sharp(image.buffer)
+        const { data, info } = await sharp(imageBuffer)
             .webp()
             .toBuffer({ resolveWithObject: true });
 
-        try {            
-            await storage.upload(data, path);            
-
+        try {
+            await storage.upload(data, path);
+        
             const body = JSON.stringify({
                 url,
                 origin,
                 account,
                 key,
-                identifier,        
+                identifier,
                 meta: {
                     fileName: convertedFileName,
                     type: info.format,
@@ -76,7 +81,7 @@ export const upload = async (req: MulterRequest ): Promise<Response> => {
                     sizeDiff: `${utils.getReducedSize(imageSize, info.size)}%`,
                     width: info.width,
                     height: info.height,
-                },
+                },      
             });
         
             sender.send('upload', body);
@@ -85,25 +90,22 @@ export const upload = async (req: MulterRequest ): Promise<Response> => {
                 body,
                 {
                     status: 200,
-                    statusText: "OK",
+                    statusText: 'OK',
                     headers: {
                         ...CORS_HEADERS,
                         'Access-Control-Allow-Origin': '*',
-                        "Content-Type": "application/json",
+                        'Content-Type': 'application/json',
                     },
                 }
             );
         } catch (error) {
-            console.log('🚀 ~ upload ~ error:', error);
             return utils.buildErrorResponse('Error uploading image.', 500);
-        }
+        }    
     } catch (error) {
         return utils.buildErrorResponse('Error converting image.', 500);
     }
-
-
 };
 
-// export const move = async (req: FastifyRequest): Promise<Response> => {
-//     return new Response(null);
-// };
+export const move = async req => {
+    return new Response(null);
+};

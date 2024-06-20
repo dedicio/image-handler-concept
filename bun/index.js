@@ -1,6 +1,10 @@
+import * as handler from './app/handler.js';
 
-import { CORS_HEADERS } from './app/constants.ts';
-import * as handler from './app/handler.ts';
+const CORS_HEADERS = {
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Methods': 'OPTIONS, POST',
+    'Access-Control-Allow-Headers': 'Content-Type',
+}
 
 const server = Bun.serve({
     port: 4000,

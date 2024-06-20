@@ -1,37 +1,37 @@
-import sharp from "sharp";
+import sharp from 'sharp';
 import shortHash from 'shorthash2';
-import * as utils from "./utils.ts";
-import * as sender from "./sender.ts";
-import * as storage from './storage.ts';
-import { CORS_HEADERS } from './constants.ts';
-import type { Request } from "express";
+import * as utils from './utils.js';
+import * as sender from './sender.js';
+import * as storage from './storage.js';
 
-const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp"];
+const ACCEPTED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
 const MAX_IMAGE_SIZE = 1024 * 1024 * 2; // 2MB
-const AWS_S3_BUCKET_URL = process.env["AWS_S3_BUCKET_URL"];
+const AWS_S3_BUCKET_URL = process.env['AWS_S3_BUCKET_URL'];
+export const CORS_HEADERS = {
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Methods': 'OPTIONS, POST',
+    'Access-Control-Allow-Headers': 'Content-Type',
+}
 
-type Body = {
-    key: string,
-    account: string,
-    identifier: string,
-    origin: string,
-};
+export const upload = async req=> {
+    if (!req.body) {
+        return utils.buildErrorResponse('Must upload a valid body data.');
+    }
 
-type MulterRequest = Request & {
-    file?: any;
-};
-
-export const upload = async (req: MulterRequest): Promise<Response> => {
     const { file: image } = req;
     const {
         key,
         account,
         identifier,
         origin,
-    } = req.body as Body;
+    } = req.body;
 
     if (!image || !(image.buffer instanceof Buffer)) {
         return utils.buildErrorResponse('Must upload a valid image file.');
+    }
+
+    if (!key || !account) {
+        return utils.buildErrorResponse('Must provide key and account values.');
     }
 
     const {
@@ -59,15 +59,15 @@ export const upload = async (req: MulterRequest): Promise<Response> => {
             .webp()
             .toBuffer({ resolveWithObject: true });
 
-        try {
-            await storage.upload(data, path);
+        try {            
+            await storage.upload(data, path);            
 
             const body = JSON.stringify({
                 url,
                 origin,
                 account,
                 key,
-                identifier,
+                identifier,        
                 meta: {
                     fileName: convertedFileName,
                     type: info.format,
@@ -78,29 +78,32 @@ export const upload = async (req: MulterRequest): Promise<Response> => {
                     height: info.height,
                 },
             });
-
+        
             sender.send('upload', body);
-
+        
             return new Response(
                 body,
                 {
                     status: 200,
-                    statusText: "OK",
+                    statusText: 'OK',
                     headers: {
                         ...CORS_HEADERS,
                         'Access-Control-Allow-Origin': '*',
-                        "Content-Type": "application/json",
+                        'Content-Type': 'application/json',
                     },
                 }
             );
         } catch (error) {
+            console.log('🚀 ~ upload ~ error:', error);
             return utils.buildErrorResponse('Error uploading image.', 500);
         }
     } catch (error) {
         return utils.buildErrorResponse('Error converting image.', 500);
     }
+
+
 };
 
-// export const move = async (req: Request): Promise<Response> => {
+// export const move = async (req: FastifyRequest): Promise<Response> => {
 //     return new Response(null);
 // };
