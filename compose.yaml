@@ -66,20 +66,3 @@ services:
         aws --endpoint-url=http://localstack:4566 s3api create-bucket --bucket image-test --region us-east-1
         aws --endpoint-url=http://localstack:4566 sns create-topic --name upload
       "
-  # influxdb:
-  #   image: influxdb:1.8
-  #   ports:
-  #     - "8086:8086"
-  #   environment:
-  #     - INFLUXDB_DB=k6
-
-  # grafana:
-  #   image: grafana/grafana:latest
-  #   ports:
-  #     - "3000:3000"
-  #   environment:
-  #     - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
-  #     - GF_AUTH_ANONYMOUS_ENABLED=true
-  #     - GF_AUTH_BASIC_ENABLED=false
-  #   volumes:
-  #     - ./grafana:/etc/grafana/provisioning/
