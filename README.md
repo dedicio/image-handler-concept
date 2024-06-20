@@ -3,11 +3,13 @@
 Este é um estudo sobre como enviar e processar imagens para um bucket S3 através de uma Lambda function.
 
 Há três serviços diferentes para comparação, usando as stacks:
-- [Bun](https://bun.sh/)
+- [Bun](https://bun.sh/)[^1]
 - [Node.js](https://nodejs.org/en) + [Express](https://expressjs.com/)
 - [Node.js](https://nodejs.org/en) + [Fastify](https://fastify.dev/)
 
 O objetivo final é montar todos da mesma forma e testar qual tem a melhor performance.
+
+
 
 ## Como rodar o projeto
 
@@ -45,3 +47,6 @@ Para parar todos os serviços
 ```bash
 make stop
 ```
+
+
+[^1]: Por problemas no uso do SDK da AWS no Bun, não foi possível rodar ele em container.
