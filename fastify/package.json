@@ -15,7 +15,7 @@
   "dependencies": {
     "@aws-sdk/client-s3": "^3.515.0",
     "@aws-sdk/client-sns": "^3.516.0",
-    "fastify": "^4.26.1",
+    "fastify": "^5.7.3",
     "fastify-multer": "^2.0.3",
     "sharp": "^0.33.2",
     "shorthash2": "^1.0.3"
