@@ -19,7 +19,7 @@
       "@aws-sdk/client-sns": "^3.996.0",
       "express": "^4.22.2",
       "multer": "^2.1.1",
-      "sharp": "^0.33.2",
+      "sharp": "^0.35.0",
       "shorthash2": "^1.0.3"
     }
   }
