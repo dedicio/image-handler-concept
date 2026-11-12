@@ -17,7 +17,7 @@
     "@aws-sdk/client-sns": "^3.995.0",
     "fastify": "^5.12.5",
     "fastify-multer": "^2.0.3",
-    "sharp": "^0.35.4",
+    "sharp": "^0.35.5",
     "shorthash2": "^1.0.3"
   }
 }
